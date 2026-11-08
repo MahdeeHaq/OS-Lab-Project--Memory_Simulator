@@ -1,3 +1,4 @@
+#include <cctype>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -27,4 +28,49 @@ bool readFrameCount(int& frames)
 
     frames = value;
     return true;
+}
+
+// Helper: turns text like "7 0 1 2" into a list of numbers.
+// Only used inside this file (that is what "static" means).
+static bool parsePages(const std::string& text, std::vector<int>& pages)
+{
+    std::istringstream in(text);
+    std::string token;
+    std::vector<int> result;
+
+    while (in >> token)
+    {
+        if (token.size() > 9)
+        {
+            std::cout << "Error: '" << token << "' is too long.\n";
+            return false;
+        }
+        for (char c : token)
+        {
+            if (!std::isdigit(static_cast<unsigned char>(c)))
+            {
+                std::cout << "Error: '" << token << "' is not a valid page number.\n";
+                return false;
+            }
+        }
+        result.push_back(std::stoi(token));
+    }
+
+    if (result.empty())
+    {
+        std::cout << "Error: no page numbers entered.\n";
+        return false;
+    }
+
+    pages = result;
+    return true;
+}
+
+bool readPagesFromKeyboard(std::vector<int>& pages)
+{
+    std::cout << "Enter page reference string (numbers separated by spaces): ";
+    std::string line;
+    if (!std::getline(std::cin, line))
+        return false;
+    return parsePages(line, pages);
 }
