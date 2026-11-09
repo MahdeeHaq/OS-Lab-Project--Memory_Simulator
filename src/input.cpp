@@ -1,3 +1,4 @@
+#include <fstream>
 #include <cctype>
 #include <iostream>
 #include <sstream>
@@ -73,4 +74,18 @@ bool readPagesFromKeyboard(std::vector<int>& pages)
     if (!std::getline(std::cin, line))
         return false;
     return parsePages(line, pages);
+}
+
+bool readPagesFromFile(const std::string& filename, std::vector<int>& pages)
+{
+    std::ifstream file(filename);
+    if (!file)
+    {
+        std::cout << "Error: cannot open file '" << filename << "'.\n";
+        return false;
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return parsePages(buffer.str(), pages);
 }
