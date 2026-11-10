@@ -2,7 +2,9 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cstddef>
 #include "../include/lru.h"
+
 using namespace std;
 
 void runLRU(const vector<int>& pages, int frameCount)
@@ -13,17 +15,18 @@ void runLRU(const vector<int>& pages, int frameCount)
         return;
     }
 
-    if(pages.empty()){
-      cout << "No page references provided!" << endl;
-      return;
+    if (pages.empty())
+    {
+        cout << "No page references provided!" << endl;
+        return;
     }
 
     vector<int> frames;
-    vector<int> lastUsed;
+    vector<size_t> lastUsed;
 
-    int pageFaults = 0,pageHits = 0;
+    int pageFaults = 0, pageHits = 0;
 
-    for (int i = 0; i < pages.size(); i++)
+    for (size_t i = 0; i < pages.size(); i++)
     {
         int currentPage = pages[i];
         bool hit = false;
@@ -36,23 +39,23 @@ void runLRU(const vector<int>& pages, int frameCount)
             hit = true;
             pageHits++;
 
-            int index = it - frames.begin();
+            size_t index = static_cast<size_t>(it - frames.begin());
             lastUsed[index] = i;
         }
         else
         {
             pageFaults++;
 
-            if (frames.size() < frameCount)
+            if (frames.size() < static_cast<size_t>(frameCount))
             {
                 frames.push_back(currentPage);
                 lastUsed.push_back(i);
             }
             else
             {
-                int lruIndex = 0;
+                size_t lruIndex = 0;
 
-                for (int j = 1; j < lastUsed.size(); j++)
+                for (size_t j = 1; j < lastUsed.size(); j++)
                 {
                     if (lastUsed[j] < lastUsed[lruIndex])
                     {
@@ -91,11 +94,12 @@ void runLRU(const vector<int>& pages, int frameCount)
 
     cout << "\nTotal Page Faults: " << pageFaults << endl;
     cout << "Total Page Hits: " << pageHits << endl;
-  int totalReferences = pages.size();
 
-double hitRatio = (double)pageHits / totalReferences;
-double faultRatio = (double)pageFaults / totalReferences;
+    size_t totalReferences = pages.size();
 
-cout << "Hit Ratio: " << hitRatio << endl;
-cout << "Fault Ratio: " << faultRatio << endl;
+    double hitRatio = static_cast<double>(pageHits) / totalReferences;
+    double faultRatio = static_cast<double>(pageFaults) / totalReferences;
+
+    cout << "Hit Ratio: " << hitRatio << endl;
+    cout << "Fault Ratio: " << faultRatio << endl;
 }
