@@ -1,4 +1,3 @@
-#include <iostream>
 #include <vector>
 #include <queue>
 #include <algorithm>
@@ -6,51 +5,53 @@
 
 using namespace std;
 
-void runFIFO(const vector<int>& pages, int frameCount)
+Result runFIFO(const vector<int>& pages, int frameCount)
 {
+    Result result;
+
+    // Bad input: return an empty result (input is also checked in input.cpp)
     if (frameCount <= 0 || pages.empty())
     {
-        cout << "Error: need at least 1 frame and 1 page." << endl;
-        return;
+        return result;
     }
+
     vector<int> frames;   // the shelf: pages currently in memory
     queue<int> order;     // the line: front = oldest page
-    int faults = 0;
-    int hits = 0;
+
     for (size_t i = 0; i < pages.size(); i++)
     {
         int page = pages[i];
-
         auto it = find(frames.begin(), frames.end(), page);
 
+        // HIT: nothing changes in FIFO
         if (it != frames.end())
         {
-            hits++;
-            cout << "Page " << page << ": HIT" << endl;
+            result.hits++;
+            result.steps.push_back({page, frames, true, -1});
             continue;
         }
-        faults++;
+
+        // FAULT
+        result.faults++;
+        int victim = -1;
 
         if (frames.size() < (size_t)frameCount)
         {
             frames.push_back(page);
             order.push(page);
-            cout << "Page " << page << ": FAULT" << endl;
         }
         else
         {
-            int victim = order.front();
+            victim = order.front();   // oldest page
             order.pop();
 
             auto slot = find(frames.begin(), frames.end(), victim);
             *slot = page;
             order.push(page);
-
-            cout << "Page " << page << ": FAULT, victim = " << victim << endl;
         }
+
+        result.steps.push_back({page, frames, false, victim});
     }
-    cout << "Total faults: " << faults << endl;
-    cout << "Total hits: " << hits << endl;
-    cout << "Hit ratio: " << (double)hits / pages.size() << endl;
-    cout << "Fault ratio: " << (double)faults / pages.size() << endl;
+
+    return result;
 }
