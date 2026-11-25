@@ -1,16 +1,63 @@
-
 #include <iostream>
+#include <vector>
 #include "../include/optimal.h"
 
 using namespace std;
 
+bool checkOptimalTest(
+    const vector<int>& pages,
+    int frameCount,
+    int expectedFaults,
+    int expectedHits,
+    int testNumber)
+{
+    cout << "\n========== Test " << testNumber << " ==========\n";
+
+    OptimalResult result = runOptimal(pages, frameCount);
+
+    bool passed =
+        (result.pageFaults == expectedFaults) &&
+        (result.pageHits == expectedHits);
+
+    cout << "Expected Faults: " << expectedFaults << endl;
+    cout << "Actual Faults: " << result.pageFaults << endl;
+
+    cout << "Expected Hits: " << expectedHits << endl;
+    cout << "Actual Hits: " << result.pageHits << endl;
+
+    cout << "Test " << testNumber << ": "
+         << (passed ? "PASS" : "FAIL") << endl;
+
+    return passed;
+}
+
 int main()
 {
-    vector<int> pages = {1, 2, 3, 4, 1, 2, 5};
+    int passedTests = 0;
+    int totalTests = 3;
 
-    int frameCount = 3;
+    // Test 1
+    if (checkOptimalTest({1, 2, 3, 4, 1, 2, 5}, 3, 5, 2, 1))
+        passedTests++;
 
-    runOptimal(pages, frameCount);
+    // Test 2
+    if (checkOptimalTest({1, 2, 1, 2}, 2, 2, 2, 2))
+        passedTests++;
 
-    return 0;
+    // Test 3
+    if (checkOptimalTest(
+        {1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5},
+        3, 7, 5, 3))
+        passedTests++;
+
+    cout << "\n========== FINAL RESULT ==========\n";
+
+    cout << "Optimal Test: "
+         << (passedTests == totalTests ? "PASS" : "FAIL")
+         << endl;
+
+    cout << "Passed: " << passedTests
+         << "/" << totalTests << endl;
+
+    return (passedTests == totalTests) ? 0 : 1;
 }

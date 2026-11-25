@@ -6,18 +6,18 @@
 
 using namespace std;
 
-void runOptimal(const vector<int>& pages, int frameCount)
+OptimalResult runOptimal(const vector<int>& pages, int frameCount)
 {
     if (frameCount <= 0)
     {
         cout << "Invalid frame count!" << endl;
-        return;
+        return {0, 0};
     }
 
     if (pages.empty())
     {
         cout << "No page references provided!" << endl;
-        return;
+        return {0, 0};
     }
 
     vector<int> frames;
@@ -116,4 +116,6 @@ void runOptimal(const vector<int>& pages, int frameCount)
     cout << "Total Page Hits: " << pageHits << endl;
     cout << "Hit Ratio: " << hitRatio << endl;
     cout << "Fault Ratio: " << faultRatio << endl;
+
+    return {pageFaults, pageHits};
 }
