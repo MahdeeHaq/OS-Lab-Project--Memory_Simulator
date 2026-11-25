@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -7,18 +6,18 @@
 
 using namespace std;
 
-void runLRU(const vector<int>& pages, int frameCount)
+LRUResult runLRU(const vector<int>& pages, int frameCount)
 {
     if (frameCount <= 0)
     {
         cout << "Invalid frame count!" << endl;
-        return;
+        return {0, 0};
     }
 
     if (pages.empty())
     {
         cout << "No page references provided!" << endl;
-        return;
+        return {0, 0};
     }
 
     vector<int> frames;
@@ -92,14 +91,15 @@ void runLRU(const vector<int>& pages, int frameCount)
         cout << endl;
     }
 
-    cout << "\nTotal Page Faults: " << pageFaults << endl;
-    cout << "Total Page Hits: " << pageHits << endl;
-
     size_t totalReferences = pages.size();
 
     double hitRatio = static_cast<double>(pageHits) / totalReferences;
     double faultRatio = static_cast<double>(pageFaults) / totalReferences;
 
+    cout << "\nTotal Page Faults: " << pageFaults << endl;
+    cout << "Total Page Hits: " << pageHits << endl;
     cout << "Hit Ratio: " << hitRatio << endl;
     cout << "Fault Ratio: " << faultRatio << endl;
+
+    return {pageFaults, pageHits};
 }

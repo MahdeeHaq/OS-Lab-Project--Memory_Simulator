@@ -2,5 +2,13 @@
 #define LRU_H
 
 #include <vector>
-void runLRU(const std::vector<int>&pages, int frameCount);
+
+struct LRUResult
+{
+    int pageFaults;
+    int pageHits;
+};
+
+LRUResult runLRU(const std::vector<int>& pages, int frameCount);
+
 #endif
