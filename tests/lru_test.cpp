@@ -1,6 +1,8 @@
+
 #include <iostream>
 #include <vector>
 #include "../include/lru.h"
+#include "../include/result.h"
 
 using namespace std;
 
@@ -11,19 +13,11 @@ bool checkLRUTest(
     int expectedHits,
     int testNumber)
 {
-    cout << "\n========== Test " << testNumber << " ==========\n";
-
-    LRUResult result = runLRU(pages, frameCount);
+    Result result = runLRU(pages, frameCount);
 
     bool passed =
-        (result.pageFaults == expectedFaults) &&
-        (result.pageHits == expectedHits);
-
-    cout << "Expected Faults: " << expectedFaults << endl;
-    cout << "Actual Faults: " << result.pageFaults << endl;
-
-    cout << "Expected Hits: " << expectedHits << endl;
-    cout << "Actual Hits: " << result.pageHits << endl;
+        (result.faults == expectedFaults) &&
+        (result.hits == expectedHits);
 
     cout << "Test " << testNumber << ": "
          << (passed ? "PASS" : "FAIL") << endl;
@@ -33,30 +27,20 @@ bool checkLRUTest(
 
 int main()
 {
-    int passedTests = 0;
-    int totalTests = 3;
+    int passed = 0;
 
-    // Test 1
     if (checkLRUTest({1, 2, 3, 1, 4}, 3, 4, 1, 1))
-        passedTests++;
+        passed++;
 
-    // Test 2
     if (checkLRUTest({1, 2, 1, 2}, 2, 2, 2, 2))
-        passedTests++;
+        passed++;
 
-    // Test 3
-    if (checkLRUTest({1, 2, 3, 1, 2, 4, 1, 2, 3, 4},
-                     3, 6, 4, 3))
-        passedTests++;
+    if (checkLRUTest(
+        {1, 2, 3, 1, 2, 4, 1, 2, 3, 4},
+        3, 6, 4, 3))
+        passed++;
 
-    cout << "\n========== FINAL RESULT ==========\n";
+    cout << "\nPassed: " << passed << "/3" << endl;
 
-    cout << "LRU Test: "
-         << (passedTests == totalTests ? "PASS" : "FAIL")
-         << endl;
-
-    cout << "Passed: " << passedTests
-         << "/" << totalTests << endl;
-
-    return (passedTests == totalTests) ? 0 : 1;
+    return 0;
 }

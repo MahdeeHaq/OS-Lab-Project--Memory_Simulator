@@ -1,29 +1,34 @@
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
 #include <cstddef>
 #include "../include/lru.h"
+#include "../include/result.h"
 
 using namespace std;
 
-LRUResult runLRU(const vector<int>& pages, int frameCount)
+Result runLRU(const vector<int>& pages, int frameCount)
 {
+    Result result;
+
     if (frameCount <= 0)
     {
         cout << "Invalid frame count!" << endl;
-        return {0, 0};
+        return result;
     }
 
     if (pages.empty())
     {
         cout << "No page references provided!" << endl;
-        return {0, 0};
+        return result;
     }
 
     vector<int> frames;
     vector<size_t> lastUsed;
 
-    int pageFaults = 0, pageHits = 0;
+    int pageFaults = 0;
+    int pageHits = 0;
 
     for (size_t i = 0; i < pages.size(); i++)
     {
@@ -69,6 +74,9 @@ LRUResult runLRU(const vector<int>& pages, int frameCount)
             }
         }
 
+        // Store each step for the shared Result structure
+        result.steps.push_back({currentPage, frames, hit, victim});
+
         cout << "Page " << currentPage << " | Frames: ";
 
         for (int page : frames)
@@ -85,21 +93,29 @@ LRUResult runLRU(const vector<int>& pages, int frameCount)
             cout << "| FAULT";
 
             if (victim != -1)
+            {
                 cout << " | Victim: " << victim;
+            }
         }
 
         cout << endl;
     }
 
+    result.faults = pageFaults;
+    result.hits = pageHits;
+
     size_t totalReferences = pages.size();
 
-    double hitRatio = static_cast<double>(pageHits) / totalReferences;
-    double faultRatio = static_cast<double>(pageFaults) / totalReferences;
+    double hitRatio =
+        static_cast<double>(result.hits) / totalReferences;
 
-    cout << "\nTotal Page Faults: " << pageFaults << endl;
-    cout << "Total Page Hits: " << pageHits << endl;
+    double faultRatio =
+        static_cast<double>(result.faults) / totalReferences;
+
+    cout << "\nTotal Page Faults: " << result.faults << endl;
+    cout << "Total Page Hits: " << result.hits << endl;
     cout << "Hit Ratio: " << hitRatio << endl;
     cout << "Fault Ratio: " << faultRatio << endl;
 
-    return {pageFaults, pageHits};
+    return result;
 }
