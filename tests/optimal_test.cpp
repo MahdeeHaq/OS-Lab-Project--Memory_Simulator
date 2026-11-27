@@ -1,6 +1,8 @@
+
 #include <iostream>
 #include <vector>
 #include "../include/optimal.h"
+#include "../include/result.h"
 
 using namespace std;
 
@@ -13,17 +15,17 @@ bool checkOptimalTest(
 {
     cout << "\n========== Test " << testNumber << " ==========\n";
 
-    OptimalResult result = runOptimal(pages, frameCount);
+    Result result = runOptimal(pages, frameCount);
 
     bool passed =
-        (result.pageFaults == expectedFaults) &&
-        (result.pageHits == expectedHits);
+        (result.faults == expectedFaults) &&
+        (result.hits == expectedHits);
 
     cout << "Expected Faults: " << expectedFaults << endl;
-    cout << "Actual Faults: " << result.pageFaults << endl;
+    cout << "Actual Faults: " << result.faults << endl;
 
     cout << "Expected Hits: " << expectedHits << endl;
-    cout << "Actual Hits: " << result.pageHits << endl;
+    cout << "Actual Hits: " << result.hits << endl;
 
     cout << "Test " << testNumber << ": "
          << (passed ? "PASS" : "FAIL") << endl;

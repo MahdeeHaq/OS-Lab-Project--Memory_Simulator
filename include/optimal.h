@@ -2,13 +2,8 @@
 #define OPTIMAL_H
 
 #include <vector>
+#include "result.h"
 
-struct OptimalResult
-{
-    int pageFaults;
-    int pageHits;
-};
-
-OptimalResult runOptimal(const std::vector<int>& pages, int frameCount);
+Result runOptimal(const std::vector<int>& pages, int frameCount);
 
 #endif

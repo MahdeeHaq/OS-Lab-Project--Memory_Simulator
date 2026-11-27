@@ -1,23 +1,18 @@
 
-#include <iostream>
 #include <vector>
 #include <algorithm>
 #include "../include/optimal.h"
+#include "../include/result.h"
 
 using namespace std;
 
-OptimalResult runOptimal(const vector<int>& pages, int frameCount)
+Result runOptimal(const vector<int>& pages, int frameCount)
 {
-    if (frameCount <= 0)
-    {
-        cout << "Invalid frame count!" << endl;
-        return {0, 0};
-    }
+    Result result;
 
-    if (pages.empty())
+    if (frameCount <= 0 || pages.empty())
     {
-        cout << "No page references provided!" << endl;
-        return {0, 0};
+        return result;
     }
 
     vector<int> frames;
@@ -49,7 +44,6 @@ OptimalResult runOptimal(const vector<int>& pages, int frameCount)
             else
             {
                 size_t victimIndex = 0;
-                size_t farthestNextUse = 0;
 
                 for (size_t j = 0; j < frames.size(); j++)
                 {
@@ -68,10 +62,23 @@ OptimalResult runOptimal(const vector<int>& pages, int frameCount)
                     size_t nextIndex =
                         static_cast<size_t>(nextUse - pages.begin());
 
-                    if (nextIndex > farthestNextUse)
+                    auto currentNextUse = find(
+                        pages.begin() + i + 1,
+                        pages.end(),
+                        frames[victimIndex]
+                    );
+
+                    if (currentNextUse != pages.end())
                     {
-                        farthestNextUse = nextIndex;
-                        victimIndex = j;
+                        size_t currentIndex =
+                            static_cast<size_t>(
+                                currentNextUse - pages.begin()
+                            );
+
+                        if (nextIndex > currentIndex)
+                        {
+                            victimIndex = j;
+                        }
                     }
                 }
 
@@ -80,42 +87,11 @@ OptimalResult runOptimal(const vector<int>& pages, int frameCount)
             }
         }
 
-        cout << "Page " << currentPage << " | Frames: ";
-
-        for (int page : frames)
-        {
-            cout << page << " ";
-        }
-
-        if (hit)
-        {
-            cout << "| HIT";
-        }
-        else
-        {
-            cout << "| FAULT";
-
-            if (victim != -1)
-            {
-                cout << " | Victim: " << victim;
-            }
-        }
-
-        cout << endl;
+        result.steps.push_back({currentPage, frames, hit, victim});
     }
 
-    int totalReferences = static_cast<int>(pages.size());
+    result.faults = pageFaults;
+    result.hits = pageHits;
 
-    double hitRatio =
-        static_cast<double>(pageHits) / totalReferences;
-
-    double faultRatio =
-        static_cast<double>(pageFaults) / totalReferences;
-
-    cout << "\nTotal Page Faults: " << pageFaults << endl;
-    cout << "Total Page Hits: " << pageHits << endl;
-    cout << "Hit Ratio: " << hitRatio << endl;
-    cout << "Fault Ratio: " << faultRatio << endl;
-
-    return {pageFaults, pageHits};
+    return result;
 }
