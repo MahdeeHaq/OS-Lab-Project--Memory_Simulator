@@ -1,5 +1,4 @@
 
-#include <iostream>
 #include <vector>
 #include <algorithm>
 #include <cstddef>
@@ -12,15 +11,8 @@ Result runLRU(const vector<int>& pages, int frameCount)
 {
     Result result;
 
-    if (frameCount <= 0)
+    if (frameCount <= 0 || pages.empty())
     {
-        cout << "Invalid frame count!" << endl;
-        return result;
-    }
-
-    if (pages.empty())
-    {
-        cout << "No page references provided!" << endl;
         return result;
     }
 
@@ -74,48 +66,11 @@ Result runLRU(const vector<int>& pages, int frameCount)
             }
         }
 
-        // Store each step for the shared Result structure
         result.steps.push_back({currentPage, frames, hit, victim});
-
-        cout << "Page " << currentPage << " | Frames: ";
-
-        for (int page : frames)
-        {
-            cout << page << " ";
-        }
-
-        if (hit)
-        {
-            cout << "| HIT";
-        }
-        else
-        {
-            cout << "| FAULT";
-
-            if (victim != -1)
-            {
-                cout << " | Victim: " << victim;
-            }
-        }
-
-        cout << endl;
     }
 
     result.faults = pageFaults;
     result.hits = pageHits;
-
-    size_t totalReferences = pages.size();
-
-    double hitRatio =
-        static_cast<double>(result.hits) / totalReferences;
-
-    double faultRatio =
-        static_cast<double>(result.faults) / totalReferences;
-
-    cout << "\nTotal Page Faults: " << result.faults << endl;
-    cout << "Total Page Hits: " << result.hits << endl;
-    cout << "Hit Ratio: " << hitRatio << endl;
-    cout << "Fault Ratio: " << faultRatio << endl;
 
     return result;
 }
