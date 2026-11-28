@@ -11,8 +11,8 @@
 #include "../include/result.h"
 #include "../include/print.h"
 #include "../include/fifo.h"
-// #include "../include/lru.h"
-// #include "../include/optimal.h"   // enable when runOptimal returns Result
+#include "../include/lru.h"
+#include "../include/optimal.h"
 
 using namespace std;
 
@@ -45,8 +45,8 @@ int main(int argc, char* argv[])
 
     // Every algorithm gets the same input and starts fresh
     showAlgorithm("FIFO", runFIFO(pages, frameCount));
-    // showAlgorithm("LRU", runLRU(pages, frameCount));
-    // showAlgorithm("Optimal", runOptimal(pages, frameCount));
+    showAlgorithm("LRU", runLRU(pages, frameCount));
+    showAlgorithm("Optimal", runOptimal(pages, frameCount));
 
     return 0;
 }
